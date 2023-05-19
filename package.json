@@ -1,0 +1,20 @@
+{
+  "name": "exercicio_rocketseat_stage08",
+  "version": "1.0.0",
+  "description": "Simple exercise for Rocketseat project at stage 08",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon ./src/server.js"
+  },
+  "author": "Renan Bianchi",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
+    "knex": "^2.4.2",
+    "nodemon": "^2.0.22",
+    "sqlite": "^4.2.0",
+    "sqlite3": "^5.1.6"
+  }
+}
