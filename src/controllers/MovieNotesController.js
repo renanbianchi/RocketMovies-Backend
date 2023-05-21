@@ -29,5 +29,20 @@ class MovieNotesController {
       return response.status(500).json({ error: "Internal Server Error" });
     }
   }
+  async fetch(request, response) {
+    const { user_id } = request.params;
+
+    if (!user_id) {
+      throw new AppError("Usuário inexistente");
+    }
+
+    const getnotes = await knex
+      .select()
+      .from("movie_notes")
+      .where("user_id", user_id);
+    console.log(getnotes);
+
+    return response.status(200).json(getnotes);
+  }
 }
 module.exports = MovieNotesController;
