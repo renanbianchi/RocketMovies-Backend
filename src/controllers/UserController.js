@@ -81,13 +81,7 @@ class UserController {
       throw new AppError("Usuário inexistente");
     }
 
-    return response
-      .json(fetchUser)
-
-      .catch((err) => {
-        console.error(res);
-        return response.json(err)
-      });
+    return response.json(fetchUser)
   }
 }
 module.exports = UserController;
