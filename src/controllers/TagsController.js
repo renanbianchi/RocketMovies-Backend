@@ -11,7 +11,6 @@ class TagsController {
       "SELECT * FROM tags WHERE user_id = (?)",
       [user_id]
     );
-    console.log(fetchTags);
 
     const fetchTags2 = await knex
       .select()
