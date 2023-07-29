@@ -6,7 +6,12 @@ const movieNotesRoutes = Router();
 
 const movieNotesController = new MovieNotesController();
 
-movieNotesRoutes.post("/:user_id", movieNotesController.create);
-movieNotesRoutes.get("/:user_id", movieNotesController.fetch);
+const ensureAuthenticated = require("../middlewares/ensureAuthenticated");
+
+movieNotesRoutes.use(ensureAuthenticated);
+
+movieNotesRoutes.post("/", movieNotesController.create);
+movieNotesRoutes.get("/", movieNotesController.fetch);
+movieNotesRoutes.delete("/:id", movieNotesController.delete);
 
 module.exports = movieNotesRoutes;

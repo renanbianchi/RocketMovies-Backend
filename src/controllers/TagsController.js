@@ -4,7 +4,7 @@ const AppError = require("../utils/AppError");
 
 class TagsController {
   async index(request, response) {
-    const { user_id } = request.params;
+    const user_id = request.user.id;
     const database = await sqliteConnection();
 
     const fetchTags = await database.all(
@@ -24,9 +24,12 @@ class TagsController {
     return response.status(200).json(fetchTags);
   }
 
-  /* async post(request, response) {
-    const { user_id } = request.params;
-  } */
+  async delete(request, response)  {
+    const user_id = request.user.id;
+    const database = await sqliteConnection();
+
+    const deleteTags = await database
+  }
 }
 
 module.exports = TagsController;
