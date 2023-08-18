@@ -4,7 +4,7 @@ const AppError = require("../utils/AppError");
 
 class UserController {
   async create(request, response) {
-    const { name, email, password } = request.body;
+    const { name, email, password1: password } = request.body;
     const database = await sqliteConnection();
     const checkUserExists = await database.get(
       "SELECT * FROM users WHERE email = (?)",
@@ -30,7 +30,9 @@ class UserController {
     const user_id = request.user.id;
     const database = await sqliteConnection();
 
-    const user = await database.get("SELECT * FROM users WHERE id = (?)", [user_id])
+    const user = await database.get("SELECT * FROM users WHERE id = (?)", [
+      user_id,
+    ]);
 
     if (!user) {
       throw new AppError("Usuário não encontrado");
@@ -75,15 +77,16 @@ class UserController {
   async fetch(request, response) {
     const user_id = request.user.id;
     const database = await sqliteConnection();
-    const fetchUser = await database.get("SELECT id, name, email, created_at, updated_at FROM users WHERE id = (?)", [
-      user_id,
-    ]);
+    const fetchUser = await database.get(
+      "SELECT id, name, email, created_at, updated_at FROM users WHERE id = (?)",
+      [user_id]
+    );
 
     if (!fetchUser) {
       throw new AppError("Usuário inexistente");
     }
 
-    return response.json(fetchUser)
+    return response.json(fetchUser);
   }
 }
 module.exports = UserController;
