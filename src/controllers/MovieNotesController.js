@@ -12,8 +12,8 @@ class MovieNotesController {
         movie_title,
         movie_description,
         grade,
-      });
 
+      });
       const tagsInsert = tags.map((tag_name) => {
         return {
           tag_name,
