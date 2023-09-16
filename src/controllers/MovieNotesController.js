@@ -5,7 +5,14 @@ class MovieNotesController {
   async create(request, response) {
     try {
       const user_id = request.user.id;
-      const { movie_title, movie_description, grade, tags, movie_id, background_path } = request.body;
+      const {
+        movie_title,
+        movie_description,
+        grade,
+        tags,
+        movie_id,
+        background_path,
+      } = request.body;
 
       const [note_id] = await knex(`movie_notes`).insert({
         user_id,
@@ -40,10 +47,29 @@ class MovieNotesController {
     const getnotes = await knex("movie_notes")
       .select(knex.raw("group_concat(tags.tag_name) as tags"))
       .select("movie_notes.*")
-      .select("users.name")
+      .select("users.name", "users.avatar")
       .leftJoin("tags", "tags.note_id", "movie_notes.id")
       .leftJoin("users", "users.id", "movie_notes.user_id")
       .where("movie_notes.user_id", user_id)
+      .groupBy("movie_notes.id");
+
+    console.log(getnotes);
+
+    return response.status(200).json(getnotes);
+  }
+  async fetchAll(request, response) {
+    const user_id = request.user.id;
+
+    if (!user_id) {
+      throw new AppError("Usuário inexistente");
+    }
+
+    const getnotes = await knex("movie_notes")
+      .select(knex.raw("group_concat(tags.tag_name) as tags"))
+      .select("movie_notes.*")
+      .select("users.name", "users.avatar")
+      .leftJoin("tags", "tags.note_id", "movie_notes.id")
+      .leftJoin("users", "users.id", "movie_notes.user_id")
       .groupBy("movie_notes.id");
 
     console.log(getnotes);
@@ -69,6 +95,51 @@ class MovieNotesController {
     } catch (e) {
       console.log(e);
       throw new AppError("Erro exclusão", 400);
+    }
+  }
+  async update(request, response) {
+    try {
+      const user_id = request.user.id;
+      const { movie_title, movie_description, grade, tags, note_id } =
+        request.body;
+
+      await knex(`movie_notes`)
+        .update({
+          movie_title,
+          movie_description,
+          grade,
+        })
+        .where("movie_notes.id", note_id);
+
+      const tagsInsert = tags.map((tag_name) => {
+        return {
+          tag_name,
+          note_id,
+          user_id,
+        };
+      });
+
+      const currentTags = await knex(`tags`).where(`tags.note_id`, note_id);
+      console.log(`currenttags`, currentTags);
+
+      if (currentTags && currentTags.length > 0) {
+        console.log(`rodou if`);
+        const newTags = tagsInsert.filter(
+          (tagInsert) =>
+            !currentTags.some(
+              (currentTag) => currentTag.tag_name === tagInsert.tag_name
+            )
+        );
+
+        await knex("tags").insert(newTags).where("tags.note_id", note_id);
+      } else {
+        await knex("tags").insert(tagsInsert).where("tags.note_id", note_id);
+      }
+
+      return response.status(201).json();
+    } catch (error) {
+      console.error(error);
+      return response.status(500).json({ error: "Internal Server Error" });
     }
   }
 }
