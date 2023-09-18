@@ -18,8 +18,6 @@ function ensureAuthenticated(request, response, next) {
       id: Number(user_id),
     };
 
-    console.log(request.user.id)
-
     return next();
   } catch (e) {
     throw new AppError("JWT Token inválido", 401);

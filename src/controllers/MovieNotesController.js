@@ -53,8 +53,6 @@ class MovieNotesController {
       .where("movie_notes.user_id", user_id)
       .groupBy("movie_notes.id");
 
-    console.log(getnotes);
-
     return response.status(200).json(getnotes);
   }
   async fetchAll(request, response) {
@@ -72,14 +70,11 @@ class MovieNotesController {
       .leftJoin("users", "users.id", "movie_notes.user_id")
       .groupBy("movie_notes.id");
 
-    console.log(getnotes);
-
     return response.status(200).json(getnotes);
   }
   async delete(request, response) {
     const user_id = request.user.id;
     const { id } = request.params;
-    console.log(id);
 
     if (!user_id) {
       throw new AppError("Usuário inexistente");
@@ -93,7 +88,6 @@ class MovieNotesController {
       await knex("movie_notes").where({ id }).delete();
       return response.json();
     } catch (e) {
-      console.log(e);
       throw new AppError("Erro exclusão", 400);
     }
   }
@@ -120,10 +114,8 @@ class MovieNotesController {
       });
 
       const currentTags = await knex(`tags`).where(`tags.note_id`, note_id);
-      console.log(`currenttags`, currentTags);
 
       if (currentTags && currentTags.length > 0) {
-        console.log(`rodou if`);
         const newTags = tagsInsert.filter(
           (tagInsert) =>
             !currentTags.some(
